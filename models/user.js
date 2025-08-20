@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
   // profileImage: String, 
   profileImage: {
     type: String,
-    default: "https://res.cloudinary.com/demo/image/upload/v123456789/default_avatar.png"
+    default: "https://cdn-icons-png.flaticon.com/512/847/847969.png"
   },
   password: {
     type: String,

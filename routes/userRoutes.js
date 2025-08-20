@@ -35,11 +35,10 @@ router.get("/authcheck", authController.authMiddleware, (req, res) => {
 // PROFILE ROUTES 
 router.get("/profile", authController.authMiddleware, authController.getProfile);
 
-router.put(
-  "/update/:id",
-  authController.authMiddleware, 
-  upload.single("profileImage"),
-  authController.updateProfileImage
-);
+
+
+// Update profile picture
+router.put("/profile/image",authController.authMiddleware, upload.single("profileImage"), authController.updateProfileImage);
+
 
 module.exports = router;
