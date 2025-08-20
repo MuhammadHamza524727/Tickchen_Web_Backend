@@ -239,7 +239,7 @@ exports.register = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -261,6 +261,7 @@ exports.login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
 
+
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -279,7 +280,7 @@ exports.login = async (req, res) => {
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
+        sameSite: "None",
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
@@ -311,7 +312,7 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-// cors check se phle
+    // cors check se phle
     // res.cookie("token", token, {
     //   httpOnly: true,
     //   secure: process.env.NODE_ENV === "production",
@@ -322,7 +323,6 @@ exports.login = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: true,
-      // secure: true ,
       sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -343,11 +343,13 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
 exports.logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "None",
   });
   res.json({ message: "Logged out successfully" });
 };
@@ -399,7 +401,7 @@ exports.updateProfileImage = async (req, res) => {
       return res.status(400).json({ success: false, error: "No image uploaded" });
     }
 
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     const user = await User.findByIdAndUpdate(
       userId,
