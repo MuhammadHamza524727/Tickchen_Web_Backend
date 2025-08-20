@@ -47,7 +47,7 @@ router.put("/update-status/:id", async (req, res) => {
 
 
 
-//       http://localhost:8080/api/user-order/orders
+//       http://https://tickchen-web-backend.vercel.app/api/user-order/orders
 router.post('/orders', authMiddleware, async (req, res) => {
   try {
     const { items } = req.body; // items = [{ name, quantity, price }]
@@ -72,7 +72,7 @@ router.post('/orders', authMiddleware, async (req, res) => {
 });
 
 
-// //      http://localhost:8080/api/user/user-order
+// //      https://tickchen-web-backend.vercel.app/api/user/user-order
 // router.get('/user-order', authMiddleware, async (req, res) => {
 //   try {
 //     const orders = await OrderSchema.find({ user: req.user._id }).populate("user", "username profileImageUrl") .sort({ createdAt: -1 });
@@ -81,7 +81,7 @@ router.post('/orders', authMiddleware, async (req, res) => {
 //     res.status(500).json({ message: 'Server error' });
 //   }
 // });
-//      http://localhost:8080/api/user/user-order
+//      https://tickchen-web-backend.vercel.app/api/user/user-order
 router.get('/user-order', authMiddleware, async (req, res) => {
   try {
     const orders = await OrderSchema.find({ user: req.user._id })

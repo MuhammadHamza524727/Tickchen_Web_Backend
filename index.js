@@ -9,7 +9,7 @@ connectDB()
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: "https://tickchen-web-backend.vercel.app/", 
   credentials: true
 }));
 
@@ -36,6 +36,11 @@ app.use("api/user",require('./routes/UserOrderRoutes'))
 app.use("/api/users", require('./routes/userRoutes'));
 
 app.use("/api/pay",require('./routes/pay.routes') );
+
+app.get("/", (req, res) => {
+  res.send("API is working ");
+});
+
 
 
 const PORT = process.env.PORT || 5000;
