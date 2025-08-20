@@ -9,7 +9,7 @@ connectDB()
 const app = express();
 
 app.use(cors({
-  origin: "https://tickchen-web-backend.vercel.app/", 
+  origin: "https://tickchen-web-backend.vercel.app", 
   credentials: true
 }));
 
