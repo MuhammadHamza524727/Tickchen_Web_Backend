@@ -311,11 +311,19 @@ exports.login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
+// cors check se phle
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === "production",
+    //   sameSite: "strict",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000,
+    // });
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      secure: true,
+      // secure: true ,
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -383,48 +391,15 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// exports.updateProfileImage = async (req, res) => {
-//   try {
-//     // Cloudinary se image ka URL
-//     const profileImage = req.file?.path || req.file?.secure_url;
-
-//     console.log(profileImage)
-
-//     if (!profileImage) {
-//       return res.status(400).json({ success: false, error: "No image uploaded" });
-//     }
-
-//     // User update karo
-//     const user = await User.findByIdAndUpdate(
-//       req.params.id,
-//       { profileImage },
-//       { new: true }
-//     );
-
-//     if (!user) {
-//       return res.status(404).json({ success: false, error: "User not found" });
-//     }
-
-//     res.json({ success: true, user ,message: "Profile image uploaded successfully"});
-//   }
-//    catch (err) {
-//     res.status(500).json({ success: false, error: err.message });
-//   }
-// };
-
-
-// Update profile image
 exports.updateProfileImage = async (req, res) => {
   try {
-    // multer-storage-cloudinary automatically adds secure_url in req.file
     const profileImage = req.file?.path || req.file?.secure_url;
 
     if (!profileImage) {
       return res.status(400).json({ success: false, error: "No image uploaded" });
     }
 
-    // Get user id from auth middleware (not from params)
-    const userId = req.user.id; // make sure req.user is set by auth middleware
+    const userId = req.user.id; 
 
     const user = await User.findByIdAndUpdate(
       userId,
