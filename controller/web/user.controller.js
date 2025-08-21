@@ -213,6 +213,7 @@ exports.register = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
 
+
     if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -222,7 +223,6 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // ❌ No hashing here — model hook will do it
     const newUser = await User.create({
       username,
       email,
@@ -236,10 +236,17 @@ exports.register = async (req, res) => {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, {
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: "lax",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000,
+    // });
+
+     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      secure: true, // local pe false, prod pe true
+      sameSite: 'None', // cors me allow hoga
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -250,6 +257,7 @@ exports.register = async (req, res) => {
         username: newUser.username,
         email: newUser.email,
         role: newUser.role,
+
       },
     });
   } catch (error) {
@@ -268,7 +276,7 @@ exports.login = async (req, res) => {
 
     // 1️⃣ Static Admin Credentials
     const STATIC_ADMIN_EMAIL = "hamza524727@gmail.com";
-    const STATIC_ADMIN_PASSWORD = "524727"; // Simple example, production me env variable me rakho
+    const STATIC_ADMIN_PASSWORD = "524727";
 
     if (email === STATIC_ADMIN_EMAIL && password === STATIC_ADMIN_PASSWORD && role === "admin") {
       const token = jwt.sign(
@@ -277,12 +285,20 @@ exports.login = async (req, res) => {
         { expiresIn: "7d" }
       );
 
+      // res.cookie("token", token, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "lax",
+      //   maxAge: 7 * 24 * 60 * 60 * 1000,
+      // });
+
       res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "None",
+        secure: true, // local pe false, prod pe true
+      sameSite: 'None',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
+
 
       return res.status(200).json({
         message: "Static admin login successful",
@@ -290,7 +306,7 @@ exports.login = async (req, res) => {
           id: "static-admin-id",
           username: "Admin",
           email: STATIC_ADMIN_EMAIL,
-          role: "admin", // fixed here
+          role: "admin",
         },
         token
       });
@@ -320,10 +336,12 @@ exports.login = async (req, res) => {
     //   maxAge: 7 * 24 * 60 * 60 * 1000,
     // });
 
+
+
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
+      secure: true, // local pe false, prod pe true
+      sameSite: 'None',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -348,30 +366,52 @@ exports.login = async (req, res) => {
 exports.logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "None",
-  });
+  secure: true, // local pe false, prod pe true
+      sameSite: 'None',
+  }
+  );
   res.json({ message: "Logged out successfully" });
 };
 
+// exports.authMiddleware = (req, res, next) => {
+//   const token = req.cookies?.token;
+//   console.log(token, 'YE  auth middle ware m cookies se tokn mila hain')
+//   if (!token) {
+//     return res.status(401).json({ authenticated: false, message: "Not authenticated" });
+//   }
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     req.user = decoded;
+//     next();
+//   } catch (error) {
+//     return res.status(401).json({ authenticated: false, message: "Invalid token" });
+//   }
+// };
+
 exports.authMiddleware = (req, res, next) => {
-  const token = req.cookies.token;
+  console.log("Cookies received:", req.cookies); // <- check
+  const token = req.cookies?.token;
+  console.log("Token extracted:", token);
   if (!token) {
     return res.status(401).json({ authenticated: false, message: "Not authenticated" });
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("Decoded token:", decoded);
     req.user = decoded;
     next();
   } catch (error) {
+    console.error("JWT verify error:", error);
     return res.status(401).json({ authenticated: false, message: "Invalid token" });
   }
 };
 
 
+
 exports.profile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

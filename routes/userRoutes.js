@@ -24,12 +24,28 @@ router.post("/register", authController.register);
 router.post("/login", authController.login);
 router.post("/logout", authController.logout);
 
+// router.get("/authcheck", authController.authMiddleware, (req, res) => {
+//   console.log("Auth middleware hit hoa hai");
+//   res.json({
+//     authenticated: true,
+//     message: "Welcome to Homepage",
+//     user: req.user,
+//   });
+// });
+
 router.get("/authcheck", authController.authMiddleware, (req, res) => {
-  res.json({
-    authenticated: true,
-    message: "Welcome to Homepage",
-    user: req.user,
-  });
+  console.log("Auth middleware hit hoa hai");
+
+  try {
+    res.status(200).json({
+      authenticated: true,
+      message: "Welcome to Homepage",
+      user: req.user,
+    });
+  } catch (err) {
+    console.error("AuthCheck error:", err);
+    res.status(500).json({ authenticated: false, message: "Server error" });
+  }
 });
 
 // PROFILE ROUTES 

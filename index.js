@@ -16,7 +16,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', require("./routes/userRoutes"));
 
 app.use('/api/reservations', require("./routes/reservationRoutes"));
 app.use('/api/admin/reservation_list',require('./routes/reservationRoutes'))
